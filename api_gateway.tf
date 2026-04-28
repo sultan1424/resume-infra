@@ -74,7 +74,7 @@ resource "aws_lb_listener_rule" "upload" {
   }
 }
 
-# Route /results* and /analyze* → AI Analysis Service
+# Route /analyze* → AI Analysis Service
 resource "aws_lb_listener_rule" "ai" {
   listener_arn = aws_lb_listener.main.arn
   priority     = 200
@@ -86,7 +86,24 @@ resource "aws_lb_listener_rule" "ai" {
 
   condition {
     path_pattern {
-      values = ["/results*", "/analyze*"]
+      values = ["/analyze*"]
+    }
+  }
+}
+
+# Route /results* → Upload Service
+resource "aws_lb_listener_rule" "results" {
+  listener_arn = aws_lb_listener.main.arn
+  priority     = 300
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.upload_service.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/results*"]
     }
   }
 }
