@@ -45,7 +45,7 @@ resource "aws_ecs_task_definition" "upload_service" {
     # Factor 3 — configuration via environment variables, not hardcoded
     environment = [
       { name = "S3_BUCKET_NAME",     value = aws_s3_bucket.cv_storage.bucket },
-      { name = "AI_SERVICE_URL",     value = "http://localhost:8081" },
+      { name = "AI_SERVICE_URL",     value = "http://${aws_lb.main.dns_name}" },
       { name = "DYNAMODB_TABLE",     value = aws_dynamodb_table.results.name },
       { name = "AWS_REGION",         value = var.aws_region },
       { name = "PORT",               value = "8080" }
@@ -95,8 +95,8 @@ resource "aws_ecs_task_definition" "ai_service" {
       { name = "DYNAMODB_TABLE",        value = aws_dynamodb_table.results.name },
       { name = "OPENSEARCH_ENDPOINT",   value = "https://${aws_opensearch_domain.vector_store.endpoint}" },
       { name = "BEDROCK_REGION",        value = var.aws_region },
-      { name = "BEDROCK_MODEL_ID",      value = "anthropic.claude-3-sonnet-20240229-v1:0" },
-      { name = "BEDROCK_EMBED_MODEL_ID",value = "amazon.titan-embed-text-v1" },
+      { name = "BEDROCK_MODEL_ID",      value = "amazon.nova-lite-v1:0" },
+      { name = "BEDROCK_EMBED_MODEL_ID",value = "amazon.titan-embed-text-v2:0" },
       { name = "AWS_REGION",            value = var.aws_region },
       { name = "PORT",                  value = "8081" }
     ]

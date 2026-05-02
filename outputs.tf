@@ -27,3 +27,8 @@ output "opensearch_endpoint" {
   description = "OpenSearch domain endpoint for the RAG vector store"
   value       = aws_opensearch_domain.vector_store.endpoint
 }
+
+output "frontend_url" {
+  description = "Frontend website URL"
+  value       = "http://${aws_s3_bucket_website_configuration.frontend.website_endpoint}"
+}
