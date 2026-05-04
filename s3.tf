@@ -2,7 +2,8 @@
 # Frontend S3 bucket — static website hosting
 # ─────────────────────────────────────────
 resource "aws_s3_bucket" "frontend" {
-  bucket = "${var.project_name}-frontend-${var.environment}"
+  bucket        = "${var.project_name}-frontend-${var.environment}"
+  force_destroy = true
 
   tags = {
     Name        = "${var.project_name}-frontend"
@@ -21,7 +22,6 @@ resource "aws_s3_bucket_public_access_block" "frontend" {
 
 resource "aws_s3_bucket_website_configuration" "frontend" {
   bucket = aws_s3_bucket.frontend.id
-
   index_document { suffix = "index.html" }
   error_document { key    = "index.html" }
 }
@@ -42,11 +42,25 @@ resource "aws_s3_bucket_policy" "frontend" {
   })
 }
 
+# Auto upload index.html with correct ALB URL injected
+resource "aws_s3_object" "frontend" {
+  bucket       = aws_s3_bucket.frontend.id
+  key          = "index.html"
+  content_type = "text/html"
+  content = replace(
+    file("${path.module}/frontend/index.html"),
+    "REPLACE_WITH_ALB_URL",
+    "http://${aws_lb.main.dns_name}"
+  )
+  depends_on = [aws_s3_bucket_policy.frontend]
+}
+
 # ─────────────────────────────────────────
 # S3 bucket for storing uploaded CV files
 # ─────────────────────────────────────────
 resource "aws_s3_bucket" "cv_storage" {
-  bucket = "${var.project_name}-cv-storage-${var.environment}"
+  bucket        = "${var.project_name}-cv-storage-${var.environment}"
+  force_destroy = true
 
   tags = {
     Name        = "${var.project_name}-cv-storage"
