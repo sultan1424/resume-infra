@@ -44,11 +44,11 @@ resource "aws_ecs_task_definition" "upload_service" {
 
     # Factor 3 — configuration via environment variables, not hardcoded
     environment = [
-      { name = "S3_BUCKET_NAME",     value = aws_s3_bucket.cv_storage.bucket },
-      { name = "AI_SERVICE_URL",     value = "http://${aws_lb.main.dns_name}" },
-      { name = "DYNAMODB_TABLE",     value = aws_dynamodb_table.results.name },
-      { name = "AWS_REGION",         value = var.aws_region },
-      { name = "PORT",               value = "8080" }
+      { name = "S3_BUCKET_NAME", value = aws_s3_bucket.cv_storage.bucket },
+      { name = "AI_SERVICE_URL", value = "http://${aws_lb.main.dns_name}" },
+      { name = "DYNAMODB_TABLE", value = aws_dynamodb_table.results.name },
+      { name = "AWS_REGION",     value = var.aws_region },
+      { name = "PORT",           value = "8080" }
     ]
 
     # Factor 11 — logs go to stdout → CloudWatch
@@ -75,8 +75,8 @@ resource "aws_ecs_task_definition" "ai_service" {
   family                   = "${var.project_name}-ai-service"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = 512   # More CPU for AI processing
-  memory                   = 1024  # More memory for RAG pipeline
+  cpu                      = 512
+  memory                   = 1024
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
 
@@ -91,14 +91,13 @@ resource "aws_ecs_task_definition" "ai_service" {
 
     # Factor 3 — configuration via environment variables
     environment = [
-      { name = "S3_BUCKET_NAME",        value = aws_s3_bucket.cv_storage.bucket },
-      { name = "DYNAMODB_TABLE",        value = aws_dynamodb_table.results.name },
-      { name = "OPENSEARCH_ENDPOINT",   value = "https://${aws_opensearch_domain.vector_store.endpoint}" },
-      { name = "BEDROCK_REGION",        value = var.aws_region },
-      { name = "BEDROCK_MODEL_ID",      value = "amazon.nova-lite-v1:0" },
-      { name = "BEDROCK_EMBED_MODEL_ID",value = "amazon.titan-embed-text-v2:0" },
-      { name = "AWS_REGION",            value = var.aws_region },
-      { name = "PORT",                  value = "8081" }
+      { name = "S3_BUCKET_NAME",         value = aws_s3_bucket.cv_storage.bucket },
+      { name = "DYNAMODB_TABLE",         value = aws_dynamodb_table.results.name },
+      { name = "BEDROCK_REGION",         value = var.aws_region },
+      { name = "BEDROCK_MODEL_ID",       value = "amazon.nova-lite-v1:0" },
+      { name = "BEDROCK_EMBED_MODEL_ID", value = "amazon.titan-embed-text-v2:0" },
+      { name = "AWS_REGION",             value = var.aws_region },
+      { name = "PORT",                   value = "8081" }
     ]
 
     # Factor 11 — logs go to stdout → CloudWatch

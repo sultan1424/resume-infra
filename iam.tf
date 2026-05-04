@@ -23,7 +23,7 @@ resource "aws_iam_role_policy_attachment" "ecs_execution_role_policy" {
 # ─────────────────────────────────────────
 # ECS Task Role
 # Allows the running containers to access AWS services
-# (S3, DynamoDB, Bedrock, OpenSearch)
+# (S3, DynamoDB, Bedrock)
 # ─────────────────────────────────────────
 resource "aws_iam_role" "ecs_task_role" {
   name = "${var.project_name}-ecs-task-role"
@@ -62,12 +62,6 @@ resource "aws_iam_role_policy" "ecs_task_policy" {
         Effect   = "Allow"
         Action   = ["bedrock:InvokeModel"]
         Resource = "*"
-      },
-      {
-        # OpenSearch — read and write vectors
-        Effect   = "Allow"
-        Action   = ["es:ESHttpGet", "es:ESHttpPost", "es:ESHttpPut"]
-        Resource = "${aws_opensearch_domain.vector_store.arn}/*"
       }
     ]
   })

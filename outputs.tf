@@ -1,5 +1,5 @@
 output "api_gateway_url" {
-  description = "Base URL of the API Gateway — use this to call your services"
+  description = "Base URL of the API Gateway"
   value       = aws_apigatewayv2_api.main.api_endpoint
 }
 
@@ -23,12 +23,12 @@ output "ecr_ai_service_url" {
   value       = aws_ecr_repository.ai_service.repository_url
 }
 
-output "opensearch_endpoint" {
-  description = "OpenSearch domain endpoint for the RAG vector store"
-  value       = aws_opensearch_domain.vector_store.endpoint
-}
-
 output "frontend_url" {
   description = "Frontend website URL"
   value       = "http://${aws_s3_bucket_website_configuration.frontend.website_endpoint}"
+}
+
+output "alb_url" {
+  description = "Direct ALB URL for testing"
+  value       = "http://${aws_lb.main.dns_name}"
 }
